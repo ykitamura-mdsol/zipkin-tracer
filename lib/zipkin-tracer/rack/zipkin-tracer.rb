@@ -80,6 +80,7 @@ module ZipkinTracer
     ensure
       synchronize do
         annotate_plugin(zipkin_env.env, status, headers, body)
+        TraceClientCollection.record_and_clear(headers) { |annotation| @tracer.record(trace_id, annotation) }
         @tracer.record(trace_id, Trace::Annotation.new(Trace::Annotation::SERVER_SEND, Trace.default_endpoint))
       end
     end
